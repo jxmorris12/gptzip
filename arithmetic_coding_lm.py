@@ -1,32 +1,38 @@
-# jxm 6/24/24
-from collections import OrderedDict
+# jxm 6/27/24
 
 import torch
-from transformers import AutoModel, AutoTokenizer
-
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 model = "gpt2"
-lm = AutoModel.from_pretrained(model)
-tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+lm = AutoModelForCausalLM.from_pretrained(model)
+tokenizer = AutoTokenizer.from_pretrained(model)
 
-probabilities = {
-    ' ': 0.18,
-    'A': 0.065, 'B': 0.012, 'C': 0.022, 'D': 0.032, 'E': 0.102, 'F': 0.021, 'G': 0.017,
-    'H': 0.053, 'I': 0.057, 'J': 0.001, 'K': 0.006, 'L': 0.033, 'M': 0.020, 'N': 0.057,
-    'O': 0.063, 'P': 0.015, 'Q': 0.001, 'R': 0.050, 'S': 0.054, 'T': 0.075, 'U': 0.023,
-    'V': 0.008, 'W': 0.018, 'X': 0.001, 'Y': 0.016, 'Z': 0.001
-}
-probabilities = OrderedDict(probabilities)
-# probabilities = OrderedDict(sorted(probabilities, key=lambda t: t[1]))
 
-def arithmetic_encode(text, probabilities):
+def get_probs(lm, char_ids):
+    # call lm
+    with torch.no_grad():
+        lm_input = torch.tensor(char_ids)[None]
+        lm_output = lm(lm_input)
+        logits = lm_output.logits[0]
+        # TODO: consider using log here to improve precision?
+    return logits.softmax(-1).cpu()
+
+def arithmetic_encode(text, lm, tokenizer):
     low = 0.0
     high = 1.0
-    for char in text:
+    char_ids = (
+        [tokenizer.bos_token_id] 
+        + tokenizer(text, add_special_tokens=False).input_ids 
+        + [tokenizer.eos_token_id]
+    )
+    all_probs = get_probs(lm, char_ids)
+    for j, char_id in enumerate(char_ids[1:]):
         current_range = high - low
-        high = low + current_range * (sum(probabilities[c] for c in probabilities if c <= char))
-        low = low + current_range * (sum(probabilities[c] for c in probabilities if c < char))
+        prob_cdf = all_probs[j-1, :].cumsum(-1)
+        high = low + current_range * prob_cdf[char_id]
+        low = low + current_range * prob_cdf[char_id-1]
     return (low + high) / 2
+
 
 def arithmetic_decode(encoded, lm, tokenizer, length):
     # TODO: implement finite-precision arithmetic
@@ -34,17 +40,11 @@ def arithmetic_decode(encoded, lm, tokenizer, length):
 
     low = 0.0
     high = 1.0
-    result_token_ids = [tokenizer.bos]
+    result_token_ids = [tokenizer.bos_token_id]
     for _ in range(length):
         current_range = high - low
         cumulative_probability = 0.0
-
-        # call lm
-        # TODO: cache with kv
-        with torch.no_grad():
-            lm_input = torch.tensor(result_token_ids[None])
-            probabilities = lm(lm_input).last_hidden_state[0, -1, :].softmax()
-            # TODO: consider using log here to improve precision
+        probabilities = get_probs(lm, result_token_ids)
 
         for char_id in range(len(probabilities)):
             prob = probabilities[char_id].item()
@@ -52,18 +52,18 @@ def arithmetic_decode(encoded, lm, tokenizer, length):
             high_char = low + current_range * cumulative_probability
             low_char = high_char - current_range * prob
             if low_char <= encoded < high_char:
-                char = tokenizer.vocab[char_id]
-                result += char
+                result_token_ids.append(char_id)
                 low = low_char
                 high = high_char
                 break
-        print(f"Decoding: char={char}, low={low}, high={high}) ")  #, mid={mid}")  # Debug statement
-    return result
+        print(f"Decoding: char={char_id}, low={low}, high={high}) ")  #, mid={mid}")  # Debug statement
+    return tokenizer.decode(result_token_ids)
+
 
 # Example usage
 text = "HELLO WORLD"
 encoded_value = arithmetic_encode(text.upper(), lm, tokenizer)
-# TODO: get rid of length
+# TODO: get rid of length by using <eos>
 decoded_text = arithmetic_decode(encoded_value, lm, tokenizer, len(text))
 print(f"Original: {text}")
 print(f"Encoded: {encoded_value}")
