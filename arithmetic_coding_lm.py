@@ -28,7 +28,7 @@ def arithmetic_encode(text, lm, tokenizer):
     all_probs = get_probs(lm, char_ids)
     for j, char_id in enumerate(char_ids[1:]):
         current_range = high - low
-        prob_cdf = all_probs[j-1, :].cumsum(-1)
+        prob_cdf = all_probs[j, :].cumsum(-1)
         high = low + current_range * prob_cdf[char_id]
         low = low + current_range * prob_cdf[char_id-1]
     return (low + high) / 2
@@ -44,7 +44,7 @@ def arithmetic_decode(encoded, lm, tokenizer, length):
     for _ in range(length):
         current_range = high - low
         cumulative_probability = 0.0
-        probabilities = get_probs(lm, result_token_ids)
+        probabilities = get_probs(lm, result_token_ids)[-1, :]
 
         for char_id in range(len(probabilities)):
             prob = probabilities[char_id].item()
@@ -62,7 +62,7 @@ def arithmetic_decode(encoded, lm, tokenizer, length):
 
 # Example usage
 text = "HELLO WORLD"
-encoded_value = arithmetic_encode(text.upper(), lm, tokenizer)
+encoded_value = arithmetic_encode(text, lm, tokenizer)
 # TODO: get rid of length by using <eos>
 decoded_text = arithmetic_decode(encoded_value, lm, tokenizer, len(text))
 print(f"Original: {text}")
