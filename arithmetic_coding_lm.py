@@ -1,6 +1,14 @@
 # jxm 6/24/24
 from collections import OrderedDict
 
+import torch
+from transformers import AutoModel, AutoTokenizer
+
+
+model = "gpt2"
+lm = AutoModel.from_pretrained(model)
+tokenizer = AutoTokenizer.from_pretrained(tokenizer)
+
 probabilities = {
     ' ': 0.18,
     'A': 0.065, 'B': 0.012, 'C': 0.022, 'D': 0.032, 'E': 0.102, 'F': 0.021, 'G': 0.017,
@@ -20,18 +28,31 @@ def arithmetic_encode(text, probabilities):
         low = low + current_range * (sum(probabilities[c] for c in probabilities if c < char))
     return (low + high) / 2
 
-def arithmetic_decode(encoded, probabilities, length):
+def arithmetic_decode(encoded, lm, tokenizer, length):
+    # TODO: implement finite-precision arithmetic
+    # TODO: Translate `encoded` into 8-bit ascii
+
     low = 0.0
     high = 1.0
-    result = ""
+    result_token_ids = [tokenizer.bos]
     for _ in range(length):
         current_range = high - low
         cumulative_probability = 0.0
-        for char, prob in probabilities.items():
+
+        # call lm
+        # TODO: cache with kv
+        with torch.no_grad():
+            lm_input = torch.tensor(result_token_ids[None])
+            probabilities = lm(lm_input).last_hidden_state[0, -1, :].softmax()
+            # TODO: consider using log here to improve precision
+
+        for char_id in range(len(probabilities)):
+            prob = probabilities[char_id].item()
             cumulative_probability += prob
             high_char = low + current_range * cumulative_probability
             low_char = high_char - current_range * prob
             if low_char <= encoded < high_char:
+                char = tokenizer.vocab[char_id]
                 result += char
                 low = low_char
                 high = high_char
@@ -41,8 +62,9 @@ def arithmetic_decode(encoded, probabilities, length):
 
 # Example usage
 text = "HELLO WORLD"
-encoded_value = arithmetic_encode(text.upper(), probabilities)
-decoded_text = arithmetic_decode(encoded_value, probabilities, len(text))
+encoded_value = arithmetic_encode(text.upper(), lm, tokenizer)
+# TODO: get rid of length
+decoded_text = arithmetic_decode(encoded_value, lm, tokenizer, len(text))
 print(f"Original: {text}")
 print(f"Encoded: {encoded_value}")
 print(f"Decoded: {decoded_text}")
