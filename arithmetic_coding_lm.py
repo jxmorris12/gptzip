@@ -45,7 +45,7 @@ class ArithmeticCoder:
         return (low + high) / 2
 
 
-    def decode(self, encoded: float, length: int) -> str:
+    def decode(self, encoded: float) -> str:
         # TODO: implement finite-precision arithmetic
         # TODO: Translate `encoded` into 8-bit ascii
 
