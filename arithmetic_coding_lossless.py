@@ -104,8 +104,8 @@ class ArithmeticCoder:
 text = "HELLO WORLD"
 coder = ArithmeticCoder()
 encoded_value = coder.encode(text)
-# TODO: get rid of length by using <eos>
-decoded_text = coder.decode(encoded_value)
+
+# decoded_text = coder.decode(encoded_value)
 print(f"Original: {text}")
 print(f"Encoded: {encoded_value}")
-print(f"Decoded: {decoded_text}")
+# print(f"Decoded: {decoded_text}")

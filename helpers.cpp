@@ -37,12 +37,14 @@ tuple<string, float, float> encode_prob(
     while(true) {
         cout << "high: " << high << " low" << low << endl;
         if(high < 0x80000000U ) { //   (high < 0.5)
+            cout << "[encode_prob.inner] case 1" << endl;
             output += output_bit_plus_pending(0, pending_bits);
             low <<= 1;
             high <<= 1;
             high |= 1; // TODO explain
         } 
         else if(low >= 0x80000000U) { //   (low > 0.5)
+            cout << "[encode_prob.inner] case 2" << endl;
             output += output_bit_plus_pending(1, pending_bits);
             pending_bits = 0;
             low <<= 1;
@@ -50,6 +52,7 @@ tuple<string, float, float> encode_prob(
             high |= 1;
         }
         else if( low >= 0x40000000 && high < 0xC0000000U ) { //   ((high > 0.25) & (low < 0.75))
+            cout << "[encode_prob.inner] case 3" << endl;
             pending_bits++;
             low <<= 1;
             high <<= 1;
@@ -84,6 +87,7 @@ tuple<string, float, float> decode_prob(
     while(true) {
         cout << "[decode_prob.inner]  low -> " << low << " high ->" << high << " message.length ->" << message.length() << endl; 
         if ( low >= 0x80000000U || high < 0x80000000U ) {
+            cout << "[decode_prob.inner]  case 1" << message.length() << endl; 
             low <<= 1;
             high <<= 1;
             high |= 1;
@@ -92,6 +96,7 @@ tuple<string, float, float> decode_prob(
             value += (next_bit == '1') ? 1 : 0;
         } 
         else if ( low >= 0x40000000 && high < 0xC0000000U ) {
+            cout << "[decode_prob.inner]  case 2" << message.length() << endl; 
             low <<= 1;
             low &= 0x7FFFFFFF;
             high <<= 1;
