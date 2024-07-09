@@ -320,5 +320,4 @@ class Decoder(_CoderBase):
       self._code = self._code * base + _padded_input_fn()
 
   def decode(self, pdf: np.ndarray) -> int:
-    print("decode pdf.sum()", pdf.sum())
     return self._process(pdf, None)

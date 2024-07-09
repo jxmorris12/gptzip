@@ -31,8 +31,8 @@ class ArithmeticCoder:
         assert len(input_ids.shape) == 2, f"can't get probs for input_ids shape {input_ids.shape}"
         with torch.no_grad():
             output = self.lm(input_ids)
-        probs = output.logits.to(torch.float32).log_softmax(dim=-1).exp()
-        print("PROBS SUM:", probs.sum())
+        
+        probs = output.logits.to(torch.float32).softmax(dim=-1)
         return probs.cpu().numpy()
 
 
@@ -90,7 +90,7 @@ class ArithmeticCoder:
             output_fn=output.append,
         )
         print("iterating", probs.shape, "?", sequence_array.shape)
-        for pdf, symbol in zip(probs[:, :], sequence_array[:]):
+        for pdf, symbol in zip(probs[:, 1:], sequence_array[1:]):
             print("symbol:", symbol.item(), "pdf argmax:", pdf.argmax())
             encoder.encode(normalize_pdf_for_arithmetic_coding(pdf), symbol.item())
         encoder.terminate()
@@ -145,17 +145,16 @@ class ArithmeticCoder:
         # already decompressed token. The value of the dummy token is irrelevant.
         sequence_array = torch.tensor([self.tokenizer.bos_token_id], dtype=torch.int32)
         print("3 >> sequence_array.shape", sequence_array.shape)
-        probs = self._next_token_probs(sequence_array[None])[0]
+        probs = self._next_token_probs(sequence_array[None])[0, 0]
 
         idx = 0
         while True:
             print("idx", idx, "probs.shape", probs.shape, "/ argmax", probs.argmax().item(), "sequence_arr", sequence_array)
-            print("pre-decode probs.sum:", probs.sum(), probs.dtype)
             try:
                 token = decoder.decode(
                     normalize_pdf_for_arithmetic_coding(probs)
                 )
-                print("decoder.decode() returned token:", token, "w/ argmax", probs[-1].argmax())
+                print("decoder.decode() returned token:", token, f"({self.tokenizer.decode(token)}) w/ argmax", probs.argmax(),  f"({self.tokenizer.decode(probs.argmax())})")
                 # if token == self.tokenizer.eos_token_id:
                 #     raise StopIteration
             except StopIteration:
@@ -165,7 +164,7 @@ class ArithmeticCoder:
                 np.append(sequence_array, token)
                 , dtype=torch.int32
             )
-            probs = self._next_token_probs(sequence_array[None])[0][-1]
+            probs = self._next_token_probs(sequence_array[None])[0, -1]
             idx += 1
 
         # Remove the dummy token and convert to bytes.
@@ -189,5 +188,6 @@ if __name__ == "__main__":
         use_slow_lossless_compression=True
     )
     print(f"[1] Code... `{code}` ({len(code)} bytes, num_padded_bits={num_padded_bits})")
+    print("\n" * 5)
     decoded_string = coder.decode(code, num_padded_bits=num_padded_bits)
     print(f"[2] Decoded: {decoded_string}")
