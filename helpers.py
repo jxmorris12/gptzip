@@ -105,7 +105,6 @@ class _CoderBase:
     )
 
   def _get_intervals(self, pdf: np.ndarray) -> np.ndarray:
-    print("GET_INTERVALS:", pdf.sum(), pdf.dtype)
     """Partition the current AC interval according to the distribution `pdf`."""
     if (pdf < 0).any():
       raise ValueError(

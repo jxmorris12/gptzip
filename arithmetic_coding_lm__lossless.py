@@ -33,7 +33,6 @@ class ArithmeticCoder:
             output = self.lm(input_ids)
         
         probs = output.logits.to(torch.float32).softmax(dim=-1)
-        print("[next_token_probs]", input_ids, probs.argmax())
         return probs.cpu().numpy()
 
 
@@ -70,7 +69,7 @@ class ArithmeticCoder:
                 sequence_array.flatten(),
             ]
         )
-        print("Tokens:", data, "//", sequence_array)
+        # print("Tokens:", data, "//", sequence_array)
 
         if use_slow_lossless_compression:
             log_probs = list()
@@ -82,7 +81,7 @@ class ArithmeticCoder:
                 probs = np.vstack(log_probs)
         else:
             probs = self._next_token_probs(sequence_array[None])[0]
-        print("probs.shape:", probs.shape, "sequence_array.shape", sequence_array.shape)
+        # print("probs.shape:", probs.shape, "sequence_array.shape", sequence_array.shape)
 
         output = list()
         encoder = Encoder(
@@ -92,7 +91,7 @@ class ArithmeticCoder:
         )
         print("iterating", probs.shape, "?", sequence_array.shape)
         for pdf, symbol in zip(probs[:,], sequence_array[1:]):
-            print("Encoding symbol:", symbol.item(), "/", self.tokenizer.decode([symbol.item()]), "pdf argmax:", pdf.argmax(), "/", self.tokenizer.decode([pdf.argmax()]))
+            # print("Encoding symbol:", symbol.item(), "/", self.tokenizer.decode([symbol.item()]), "pdf argmax:", pdf.argmax(), "/", self.tokenizer.decode([pdf.argmax()]))
             encoder.encode(normalize_pdf_for_arithmetic_coding(pdf), symbol.item())
         encoder.terminate()
 
@@ -145,22 +144,22 @@ class ArithmeticCoder:
         # tokens, but without a dummy token, the last `pdf` would be that of the last
         # already decompressed token. The value of the dummy token is irrelevant.
         sequence_array = torch.tensor([self.tokenizer.bos_token_id], dtype=torch.int32)
-        print("3 >> sequence_array.shape", sequence_array.shape)
+        # print("3 >> sequence_array.shape", sequence_array.shape)
         probs = self._next_token_probs(sequence_array[None])[0, 0]
 
         idx = 0
         while True:
-            print("idx", idx, "probs.shape", probs.shape, "/ argmax", probs.argmax().item(), "sequence_arr", sequence_array)
+            # print("idx", idx, "probs.shape", probs.shape, "/ argmax", probs.argmax().item(), "sequence_arr", sequence_array)
             try:
                 token = decoder.decode(
                     normalize_pdf_for_arithmetic_coding(probs)
                 )
-                print("decoder.decode() returned token:", token, f"({self.tokenizer.decode(token)}) w/ argmax", probs.argmax(),  f"({self.tokenizer.decode(probs.argmax())})")
+                # print("decoder.decode() returned token:", token, f"({self.tokenizer.decode(token)}) w/ argmax", probs.argmax(),  f"({self.tokenizer.decode(probs.argmax())})")
                 # if token == self.tokenizer.eos_token_id:
                 #     raise StopIteration
             except StopIteration:
                 break
-            print("\t token:", token)
+            # print("\t token:", token)
             sequence_array = torch.tensor(
                 np.append(sequence_array, token)
                 , dtype=torch.int32
