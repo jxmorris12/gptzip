@@ -81,5 +81,5 @@ def normalize_pdf_for_arithmetic_coding(pdf: np.ndarray) -> np.ndarray:
   # Normalize the probabilities to avoid floating-point errors.
   pdf = pdf / np.cumsum(pdf)[-1]
   # Ensure all probabilities are sufficiently large to yield distinct cdfs.
-  pdf = (1 - 2 * pdf.shape[0] * machine_epsilon) * pdf + machine_epsilon
+  pdf = (1 - 2 * pdf.size * machine_epsilon) * pdf + machine_epsilon
   return pdf

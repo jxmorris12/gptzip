@@ -33,6 +33,7 @@ class ArithmeticCoder:
             output = self.lm(input_ids)
         
         probs = output.logits.to(torch.float32).softmax(dim=-1)
+        print("[next_token_probs]", input_ids, probs.argmax())
         return probs.cpu().numpy()
 
 
@@ -90,8 +91,8 @@ class ArithmeticCoder:
             output_fn=output.append,
         )
         print("iterating", probs.shape, "?", sequence_array.shape)
-        for pdf, symbol in zip(probs[:, 1:], sequence_array[1:]):
-            print("symbol:", symbol.item(), "pdf argmax:", pdf.argmax())
+        for pdf, symbol in zip(probs[:,], sequence_array[1:]):
+            print("Encoding symbol:", symbol.item(), "/", self.tokenizer.decode([symbol.item()]), "pdf argmax:", pdf.argmax(), "/", self.tokenizer.decode([pdf.argmax()]))
             encoder.encode(normalize_pdf_for_arithmetic_coding(pdf), symbol.item())
         encoder.terminate()
 
@@ -100,8 +101,8 @@ class ArithmeticCoder:
 
         if return_num_padded_bits:
             return compressed_bytes, num_padded_bits
-
-        return compressed_bytes
+        else:
+            return compressed_bytes
 
 
     def decode(
@@ -185,7 +186,7 @@ if __name__ == "__main__":
     code, num_padded_bits = coder.encode(
         string, 
         return_num_padded_bits=True, 
-        use_slow_lossless_compression=False,
+        use_slow_lossless_compression=True,
     )
     print(f"[1] Code... `{code}` ({len(code)} bytes, num_padded_bits={num_padded_bits})")
     print("\n" * 5)
