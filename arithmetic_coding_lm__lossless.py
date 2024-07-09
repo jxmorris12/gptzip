@@ -80,7 +80,7 @@ class ArithmeticCoder:
                 log_probs.append(subsequence_probs[0, -1])
                 probs = np.vstack(log_probs)
         else:
-            probs = self._next_token_probs(sequence_array)
+            probs = self._next_token_probs(sequence_array[None])[0]
         print("probs.shape:", probs.shape, "sequence_array.shape", sequence_array.shape)
 
         output = list()
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     code, num_padded_bits = coder.encode(
         string, 
         return_num_padded_bits=True, 
-        use_slow_lossless_compression=True
+        use_slow_lossless_compression=False,
     )
     print(f"[1] Code... `{code}` ({len(code)} bytes, num_padded_bits={num_padded_bits})")
     print("\n" * 5)
