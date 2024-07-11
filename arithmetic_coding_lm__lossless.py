@@ -10,8 +10,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from utils import bits_to_bytes, bytes_to_bits, normalize_pdf_for_arithmetic_coding
 from helpers import Encoder, Decoder
 
-CHUNK_SIZE_BYTES = 1024
-
 # Base 2 means that the coder writes bits.
 ARITHMETIC_CODER_BASE = 2
 # Precision 32 implies 32 bit arithmetic.
