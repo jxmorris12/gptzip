@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Tuple
 
 import argparse
 import numpy as np
@@ -19,6 +19,7 @@ ARITHMETIC_CODER_PRECISION = 32
 
 class ArithmeticCoder:
     # Helpful links:
+    #   > https://github.com/google-deepmind/language_modeling_is_compression
     #   > https://www.cs.cmu.edu/~aarti/Class/10704/Intro_Arith_coding.pdf
     #   > https://marknelson.us/posts/2014/10/19/data-compression-with-arithmetic-coding.html
     #   > https://www.cs.ucf.edu/courses/cap5015/Arithmetic%20Coding%20note%202004.pdf
@@ -27,20 +28,34 @@ class ArithmeticCoder:
         self.lm = lm
         self.tokenizer = tokenizer
     
-    def _next_token_probs(self, input_ids: torch.Tensor) -> torch.Tensor:
+    def _next_token_probs(self, input_ids: torch.Tensor, past_key_values: Tuple) -> torch.Tensor:
+        print("[_next_token_probs],", input_ids, past_key_values is None)
+        if (past_key_values is not None):
+            # HuggingFace doesn't want us to provide input ids for anything that's in the kv cache.
+            # We have to trim this part.
+            kv_cache_seq_length = past_key_values[0][0].shape[2]
+            input_ids = input_ids[:, kv_cache_seq_length:]
         assert len(input_ids.shape) == 2, f"can't get probs for input_ids shape {input_ids.shape}"
+        attention_mask = torch.ones_like(input_ids)
+        position_ids = attention_mask.long().cumsum(-1) - 1
+        position_ids.masked_fill_(attention_mask == 0, 1)
         with torch.no_grad():
-            output = self.lm(input_ids)
+            output = self.lm(
+                input_ids=input_ids,
+                # attention_mask=attention_mask,
+                # position_ids=position_ids,
+                past_key_values=past_key_values,
+                use_cache=True,
+            )
         
         probs = output.logits.to(torch.float32).softmax(dim=-1)
-        return probs.cpu().numpy()
+        return (probs.cpu().numpy(), output.past_key_values)
 
 
     def encode(
         self,
         data: str,
         return_num_padded_bits: bool = False,
-        use_slow_lossless_compression: bool = False,
     ) -> bytes | tuple[bytes, int]:
         """Compresses the `data` using arithmetic coding and a pretrained model.
 
@@ -49,13 +64,6 @@ class ArithmeticCoder:
             return_num_padded_bits: Whether to return the number of zeros added to the
             encoded bitstream in order to make it byte-decodeable (i.e., divisible by
             8). Usually, this is used when the encoded data has to be decoded again.
-            use_slow_lossless_compression: Whether to compute the `pdf`s for all tokens
-            in the data stream in one go or separately for every proper subsequence.
-            When only compressing data (i.e., without decompression) use the first
-            approach (i.e., `True`) since it has an O(n) runtime complexity, while the
-            latter is O(n^2). However, the goal is to losslessly decompress the
-            compressed output, use the second option (i.e., `False`) since this is
-            what happens in the decoder (which iteratively reconstructs the sequence).
 
         Returns:
             The compressed data.
@@ -71,17 +79,15 @@ class ArithmeticCoder:
         )
         # print("Tokens:", data, "//", sequence_array)
 
-        if use_slow_lossless_compression:
-            log_probs = list()
-            for subsequence_length in range(len(sequence_array)):
-                subsequence_probs = self._next_token_probs(
-                    sequence_array[None, : subsequence_length + 1]
-                )
-                log_probs.append(subsequence_probs[0, -1])
-                probs = np.vstack(log_probs)
-        else:
-            probs = self._next_token_probs(sequence_array[None])[0]
-        # print("probs.shape:", probs.shape, "sequence_array.shape", sequence_array.shape)
+        log_probs = []
+        past_key_values = None
+        for subsequence_length in range(len(sequence_array)):
+            subsequence_probs, past_key_values = self._next_token_probs(
+                input_ids=sequence_array[None, : subsequence_length + 1],
+                past_key_values=past_key_values
+            )
+            log_probs.append(subsequence_probs[0, -1])
+            probs = np.vstack(log_probs)
 
         output = list()
         encoder = Encoder(
@@ -89,7 +95,6 @@ class ArithmeticCoder:
             precision=ARITHMETIC_CODER_PRECISION,
             output_fn=output.append,
         )
-        print("iterating", probs.shape, "?", sequence_array.shape)
         for pdf, symbol in zip(probs[:,], sequence_array[1:]):
             # print("Encoding symbol:", symbol.item(), "/", self.tokenizer.decode([symbol.item()]), "pdf argmax:", pdf.argmax(), "/", self.tokenizer.decode([pdf.argmax()]))
             encoder.encode(normalize_pdf_for_arithmetic_coding(pdf), symbol.item())
@@ -108,7 +113,6 @@ class ArithmeticCoder:
             self,
             data: bytes,
             num_padded_bits: int = 0,
-            uncompressed_length: int = CHUNK_SIZE_BYTES,
         ) -> bytes:
         """Decompresses the `data` using arithmetic coding and a pretrained model.
 
@@ -118,7 +122,6 @@ class ArithmeticCoder:
             data: The data to be decompressed.
             num_padded_bits: The number of zeros added to the encoded bitstream in order
             to make it byte-decodeable (i.e., divisble by 8).
-            uncompressed_length: The length of the original data stream (in bytes).
 
         Returns:
             The decompressed data.
@@ -145,7 +148,11 @@ class ArithmeticCoder:
         # already decompressed token. The value of the dummy token is irrelevant.
         sequence_array = torch.tensor([self.tokenizer.bos_token_id], dtype=torch.int32)
         # print("3 >> sequence_array.shape", sequence_array.shape)
-        probs = self._next_token_probs(sequence_array[None])[0, 0]
+        probs, past_key_values = self._next_token_probs(
+            input_ids=sequence_array[None], 
+            past_key_values=None
+        )
+        probs = probs[0, 0]
 
         idx = 0
         while True:
@@ -154,9 +161,6 @@ class ArithmeticCoder:
                 token = decoder.decode(
                     normalize_pdf_for_arithmetic_coding(probs)
                 )
-                # print("decoder.decode() returned token:", token, f"({self.tokenizer.decode(token)}) w/ argmax", probs.argmax(),  f"({self.tokenizer.decode(probs.argmax())})")
-                # if token == self.tokenizer.eos_token_id:
-                #     raise StopIteration
             except StopIteration:
                 break
             # print("\t token:", token)
@@ -164,7 +168,8 @@ class ArithmeticCoder:
                 np.append(sequence_array, token)
                 , dtype=torch.int32
             )
-            probs = self._next_token_probs(sequence_array[None])[0, -1]
+            probs, past_key_values = self._next_token_probs(sequence_array[None], past_key_values=past_key_values)
+            probs = probs[0, -1]
             idx += 1
 
         # Remove the dummy token and convert to bytes.
@@ -185,7 +190,6 @@ if __name__ == "__main__":
     code, num_padded_bits = coder.encode(
         string, 
         return_num_padded_bits=True, 
-        use_slow_lossless_compression=True,
     )
     print(f"[1] Code... `{code}` ({len(code)} bytes, num_padded_bits={num_padded_bits})")
     print("\n" * 5)
