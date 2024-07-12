@@ -7,8 +7,8 @@ import torch
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from utils import bits_to_bytes, bytes_to_bits, normalize_pdf_for_arithmetic_coding
-from helpers import Encoder, Decoder
+from .utils import bits_to_bytes, bytes_to_bits, normalize_pdf_for_arithmetic_coding
+from .helpers import Encoder, Decoder
 
 # Base 2 means that the coder writes bits.
 ARITHMETIC_CODER_BASE = 2
