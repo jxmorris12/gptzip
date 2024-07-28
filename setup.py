@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="gptzip",
-    version="0.0.1",
+    version="0.0.2",
     description="losslessly compress data with language models",
     author="Jack Morris",
     author_email="jxm3@cornell.edu",
