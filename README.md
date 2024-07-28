@@ -45,6 +45,15 @@ decoded_string = coder.decode(code, num_padded_bits=num_padded_bits)
 assert decoded_string == string
 ```
 
+
+### Roadmap
+
+Some features that would be nice to add:
+[] Other compression techniques such as Huffman
+[] Benchmarking against other compressions and add numbers to README
+[] Support for other language modeling softwares such as VLLM
+[] Compress multiple strings in batch
+
 ### Citation
 
 Thanks to DeepMind implementation for helping me implement Arithmetic coding in Python. I learned a lot from their [implementation](https://github.com/google-deepmind/language_modeling_is_compression) and paper, [Language Modeling Is Compression](https://deepmind.google/research/publications/39768/). 
