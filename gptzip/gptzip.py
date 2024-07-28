@@ -3,6 +3,7 @@ from typing import Iterator, Tuple
 import argparse
 import numpy as np
 import torch
+import tqdm
 
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -26,29 +27,26 @@ class ArithmeticCoder:
         self.lm = lm
         self.tokenizer = tokenizer
     
+    @property
+    def _lm_device(self) -> torch.device:
+        return next(self.lm.parameters()).device
+    
     def _next_token_probs(self, input_ids: torch.Tensor, past_key_values: Tuple) -> torch.Tensor:
-        print("[_next_token_probs],", input_ids, past_key_values is None)
         if (past_key_values is not None):
             # HuggingFace doesn't want us to provide input ids for anything that's in the kv cache.
             # We have to trim this part.
             kv_cache_seq_length = past_key_values[0][0].shape[2]
             input_ids = input_ids[:, kv_cache_seq_length:]
         assert len(input_ids.shape) == 2, f"can't get probs for input_ids shape {input_ids.shape}"
-        attention_mask = torch.ones_like(input_ids)
-        position_ids = attention_mask.long().cumsum(-1) - 1
-        position_ids.masked_fill_(attention_mask == 0, 1)
         with torch.no_grad():
             output = self.lm(
-                input_ids=input_ids,
-                # attention_mask=attention_mask,
-                # position_ids=position_ids,
+                input_ids=input_ids.to(self._lm_device),
                 past_key_values=past_key_values,
                 use_cache=True,
             )
         
         probs = output.logits.to(torch.float32).softmax(dim=-1)
         return (probs.cpu().numpy(), output.past_key_values)
-
 
     def encode(
         self,
@@ -60,14 +58,12 @@ class ArithmeticCoder:
         Args:
             data: The data to be compressed.
             return_num_padded_bits: Whether to return the number of zeros added to the
-            encoded bitstream in order to make it byte-decodeable (i.e., divisible by
-            8). Usually, this is used when the encoded data has to be decoded again.
+                encoded bitstream in order to make it byte-decodeable (i.e., divisible by
+                8). Usually, this is used when the encoded data has to be decoded again.
 
         Returns:
             The compressed data.
         """
-
-        # Convert the `data` into an array of integers (representing the bytes).
         sequence_array = self.tokenizer(data, return_tensors='pt').input_ids
         sequence_array = torch.cat(
             [
@@ -75,11 +71,9 @@ class ArithmeticCoder:
                 sequence_array.flatten(),
             ]
         )
-        # print("Tokens:", data, "//", sequence_array)
-
         log_probs = []
         past_key_values = None
-        for subsequence_length in range(len(sequence_array)):
+        for subsequence_length in tqdm.trange(len(sequence_array), leave=False):
             subsequence_probs, past_key_values = self._next_token_probs(
                 input_ids=sequence_array[None, : subsequence_length + 1],
                 past_key_values=past_key_values
@@ -94,7 +88,6 @@ class ArithmeticCoder:
             output_fn=output.append,
         )
         for pdf, symbol in zip(probs[:,], sequence_array[1:]):
-            # print("Encoding symbol:", symbol.item(), "/", self.tokenizer.decode([symbol.item()]), "pdf argmax:", pdf.argmax(), "/", self.tokenizer.decode([pdf.argmax()]))
             encoder.encode(normalize_pdf_for_arithmetic_coding(pdf), symbol.item())
         encoder.terminate()
 
