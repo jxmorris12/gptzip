@@ -49,10 +49,11 @@ assert decoded_string == string
 ### Roadmap
 
 Some features that would be nice to add:
-[] Other compression techniques such as Huffman
-[] Benchmarking against other compressions and add numbers to README
-[] Support for other language modeling softwares such as VLLM
-[] Compress multiple strings in batch
+
+- [ ] Other compression techniques such as Huffman
+- [ ] Benchmarking against other compressions and add numbers to README
+- [ ] Support for other language modeling softwares such as VLLM
+- [ ] Compress multiple strings in batch
 
 ### Citation
 
