@@ -1,27 +1,8 @@
-# Copyright 2024 DeepMind Technologies Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
 """Implements an Arithmetic Encoder and Decoder."""
 
-from typing import Any, Callable
+from typing import Any, Optional, Callable
 
 import numpy as np
-
-InputFn = Callable[[], int]
-OutputFn = Callable[[int], None]
-IOFn = InputFn | OutputFn
 
 
 def _log_power_of_b(n: int, base: int) -> int:
@@ -57,7 +38,7 @@ def _raise_post_terminate_exception(*args: Any, **kwargs: Any) -> None:
 class _CoderBase:
   """Arithmetic coder (AC) base class."""
 
-  def __init__(self, base: int, precision: int, io_fn: IOFn):
+  def __init__(self, base: int, precision: int, io_fn: Callable):
     """Does initialization shared by AC encoder and decoder.
 
     Args:
@@ -211,7 +192,7 @@ class _CoderBase:
       self._low = _shift_left_keeping_msd(self._low)
       self._high = _shift_left_keeping_msd(self._high) + self._base - 1
 
-  def _process(self, pdf: np.ndarray, symbol: int | None) -> int:
+  def _process(self, pdf: np.ndarray, symbol: Optional[int]) -> int:
     """Perform an AC encoding or decoding step and modify AC state in-place.
 
     Args:
@@ -260,7 +241,7 @@ class _CoderBase:
 class Encoder(_CoderBase):
   """Arithmetic encoder."""
 
-  def __init__(self, base: int, precision: int, output_fn: OutputFn):
+  def __init__(self, base: int, precision: int, output_fn: Callable):
     """Constructs arithmetic encoder.
 
     Args:
@@ -291,7 +272,7 @@ class Encoder(_CoderBase):
 class Decoder(_CoderBase):
   """Arithmetic decoder."""
 
-  def __init__(self, base: int, precision: int, input_fn: InputFn):
+  def __init__(self, base: int, precision: int, input_fn: Callable):
     """Constructs arithmetic decoder.
 
     Args:

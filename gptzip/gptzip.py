@@ -1,4 +1,4 @@
-from typing import Iterator, Tuple
+from typing import Iterator, Optional, Tuple, Union
 
 import argparse
 import numpy as np
@@ -11,10 +11,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from .utils import bits_to_bytes, bytes_to_bits, normalize_pdf_for_arithmetic_coding
 from .helpers import Encoder, Decoder
 
-# Base 2 means that the coder writes bits.
-ARITHMETIC_CODER_BASE = 2
-# Precision 32 implies 32 bit arithmetic.
-ARITHMETIC_CODER_PRECISION = 32
 
 class ArithmeticCoder:
     # Helpful links:
@@ -22,6 +18,10 @@ class ArithmeticCoder:
     #   > https://www.cs.cmu.edu/~aarti/Class/10704/Intro_Arith_coding.pdf
     #   > https://marknelson.us/posts/2014/10/19/data-compression-with-arithmetic-coding.html
     #   > https://www.cs.ucf.edu/courses/cap5015/Arithmetic%20Coding%20note%202004.pdf
+    # Base 2 means that the coder writes bits.
+    ARITHMETIC_CODER_BASE = 2
+    # Precision 32 implies 32 bit arithmetic.
+    ARITHMETIC_CODER_PRECISION = 32
 
     def __init__(self, lm, tokenizer):
         self.lm = lm
@@ -52,7 +52,7 @@ class ArithmeticCoder:
         self,
         data: str,
         return_num_padded_bits: bool = False,
-    ) -> bytes | tuple[bytes, int]:
+    ) -> Union[bytes, tuple[bytes, int]]:
         """Compresses the `data` using arithmetic coding and a pretrained model.
 
         Args:
@@ -83,8 +83,8 @@ class ArithmeticCoder:
 
         output = list()
         encoder = Encoder(
-            base=ARITHMETIC_CODER_BASE,
-            precision=ARITHMETIC_CODER_PRECISION,
+            base=ArithmeticCoder.ARITHMETIC_CODER_BASE,
+            precision=ArithmeticCoder.ARITHMETIC_CODER_PRECISION,
             output_fn=output.append,
         )
         for pdf, symbol in zip(probs[:,], sequence_array[1:]):
@@ -104,6 +104,7 @@ class ArithmeticCoder:
             self,
             data: bytes,
             num_padded_bits: int = 0,
+            skip_special_tokens: bool = True,
         ) -> bytes:
         """Decompresses the `data` using arithmetic coding and a pretrained model.
 
@@ -113,6 +114,8 @@ class ArithmeticCoder:
             data: The data to be decompressed.
             num_padded_bits: The number of zeros added to the encoded bitstream in order
             to make it byte-decodeable (i.e., divisble by 8).
+            skip_special_tokens: Whether to filter out e.g. <eos> in tokens-to-string
+                conversion.
 
         Returns:
             The decompressed data.
@@ -121,15 +124,15 @@ class ArithmeticCoder:
 
         # The decoder requires a function that reads digits from {0, 1, ..., base - 1}
         # from the compressed input and returns `None` when the input is exhausted.
-        def _input_fn(bit_sequence: Iterator[str] = data_iter) -> int | None:
+        def _input_fn(bit_sequence: Iterator[str] = data_iter) -> Optional[int]:
             try:
                 return int(next(bit_sequence))
             except StopIteration:
                 return None
 
         decoder = Decoder(
-            base=ARITHMETIC_CODER_BASE,
-            precision=ARITHMETIC_CODER_PRECISION,
+            base=ArithmeticCoder.ARITHMETIC_CODER_BASE,
+            precision=ArithmeticCoder.ARITHMETIC_CODER_PRECISION,
             input_fn=_input_fn,
         )
         # We need a dummy token because the language model right-shifts the sequence
@@ -165,7 +168,7 @@ class ArithmeticCoder:
 
         # Remove the dummy token and convert to bytes.
         print(f"Decoded {len(sequence_array)} tokens:", sequence_array)
-        return self.tokenizer.decode(sequence_array)
+        return self.tokenizer.decode(sequence_array, skip_special_tokens=skip_special_tokens)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
