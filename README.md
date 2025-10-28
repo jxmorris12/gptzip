@@ -65,9 +65,11 @@ I also am indebted to Mark Nelson for his incredibly blog post [Data Compression
 
 ### Citation
 
+```
 @misc{morris2024gptzip,
   author = {Morris, John X},
   title = {gptzip: Losslessly encode text natively with arithmetic coding and HuggingFace Transformers},
   url = {https://github.com/jxmorris12/gptzip},
   year = {2024}
 }
+```
