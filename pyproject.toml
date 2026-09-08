@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gptzip"
+version = "0.1.0"
+authors = [{name = "Jack Morris", email = "jxm3@cornell.edu"}]
+description = "Arithmetic coding with CPU language models"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2", "torch>=2.5", "transformers>=4.51"]
+
+[tool.setuptools.packages.find]
+include = ["gptzip*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: local model weights required; never downloads weights"]
+
+[tool.setuptools.package-data]
+gptzip = ["native/*.c", "native/*.h"]

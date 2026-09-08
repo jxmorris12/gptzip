@@ -1,11 +1,24 @@
-from setuptools import find_packages, setup
+from setuptools import Extension, setup
 
 setup(
-    name="gptzip",
-    version="0.0.2",
-    description="losslessly compress data with language models",
-    author="Jack Morris",
-    author_email="jxm3@cornell.edu",
-    packages=find_packages(),
-    install_requires=open("requirements.txt").readlines(),
+    ext_modules=[
+        Extension(
+            "gptzip._native",
+            sources=[
+                "gptzip/native/module.c",
+                "gptzip/native/cdf.c",
+                "gptzip/native/range.c",
+                "gptzip/native/bits.c",
+            ],
+            extra_compile_args=[
+                "-O3",
+                "-std=c11",
+                "-fno-fast-math",
+                "-ffp-contract=off",
+                "-Wall",
+                "-Wextra",
+                "-Werror=implicit-function-declaration",
+            ],
+        )
+    ]
 )

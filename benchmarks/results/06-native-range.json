@@ -1,0 +1,75 @@
+{
+  "round": "06-native-range",
+  "source_sha256": "4d3643e21f085e12c62655add49889eee2bdba434ee73f54870a11c6230a84a2",
+  "python": "3.13.11",
+  "numpy": "2.4.4",
+  "torch": "2.14.0.dev20260706+cu132",
+  "cases": {
+    "encode_v256_b1_t3525": {
+      "seconds": [
+        0.004834343679249287,
+        0.005177381448447704,
+        0.0048235440626740456
+      ],
+      "median_seconds": 0.004834343679249287,
+      "python_peak_bytes": 493465,
+      "digest": "094e4f0247df2720cabb4b6ceb0987cf3177a915d7220051da4ed3a97961d95e",
+      "profile": "         17639 function calls in 0.008 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.001    0.001    0.008    0.008 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:69(encode)\n     3525    0.001    0.000    0.005    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n     3525    0.003    0.000    0.003    0.000 {built-in method gptzip._native.build_cdf}\n     3525    0.001    0.000    0.001    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:17(encode)\n     3525    0.001    0.000    0.001    0.000 {built-in method numpy.frombuffer}\n     3525    0.001    0.000    0.001    0.000 {built-in method gptzip._native.encode}\n        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:4(bits_to_bytes)\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:12(__init__)\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:20(terminate)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n        4    0.000    0.000    0.000    0.000 {built-in method builtins.len}\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n        1    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n        1    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n\n\n"
+    },
+    "decode_v256_b1_t3525": {
+      "seconds": [
+        0.005238594487309456,
+        0.005179083906114101,
+        0.005094785243272781
+      ],
+      "median_seconds": 0.005179083906114101,
+      "python_peak_bytes": 68283,
+      "digest": "2ad1d206f27f87de6100777be309781430e470daa3088bf1bda165ae13328e19",
+      "profile": "         39976 function calls in 0.014 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.002    0.002    0.014    0.014 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:82(decode)\n     3525    0.001    0.000    0.005    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n     3525    0.001    0.000    0.005    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:30(decode)\n     3525    0.002    0.000    0.004    0.000 {built-in method gptzip._native.decode}\n     3525    0.003    0.000    0.003    0.000 {built-in method gptzip._native.build_cdf}\n     8367    0.002    0.000    0.003    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:86(<lambda>)\n     3525    0.001    0.000    0.001    0.000 {built-in method numpy.frombuffer}\n     8367    0.001    0.000    0.001    0.000 {built-in method builtins.next}\n        1    0.000    0.000    0.001    0.001 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:19(bytes_to_bits)\n     3526    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n     1042    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n     1042    0.000    0.000    0.000    0.000 {built-in method builtins.bin}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:25(__init__)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n        1    0.000    0.000    0.000    0.000 {built-in method builtins.iter}\n\n\n"
+    },
+    "encode_v151936_b1_t128": {
+      "seconds": [
+        0.036439212039113045,
+        0.036576107144355774,
+        0.03683703765273094
+      ],
+      "median_seconds": 0.036576107144355774,
+      "python_peak_bytes": 614557,
+      "digest": "5ae9688ed7fe8e97e0a458dac29169d5c937b0f35f8b20236115a3cc730b06c0",
+      "profile": "         654 function calls in 0.047 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.047    0.047 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:69(encode)\n      128    0.000    0.000    0.046    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n      128    0.046    0.000    0.046    0.000 {built-in method gptzip._native.build_cdf}\n      128    0.000    0.000    0.000    0.000 {built-in method numpy.frombuffer}\n      128    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:17(encode)\n      128    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encode}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:4(bits_to_bytes)\n        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:12(__init__)\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:20(terminate)\n        1    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n        4    0.000    0.000    0.000    0.000 {built-in method builtins.len}\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n        1    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n\n\n"
+    },
+    "decode_v151936_b1_t128": {
+      "seconds": [
+        0.038878449238836765,
+        0.04933574702590704,
+        0.051573364064097404
+      ],
+      "median_seconds": 0.04933574702590704,
+      "python_peak_bytes": 611399,
+      "digest": "7df931fa630f4218de46cacfebf97c593b8655c6a0a0758679d2277bada46266",
+      "profile": "         2444 function calls in 0.051 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.051    0.051 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:82(decode)\n      128    0.000    0.000    0.050    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n      128    0.050    0.000    0.050    0.000 {built-in method gptzip._native.build_cdf}\n      128    0.000    0.000    0.001    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:30(decode)\n      128    0.000    0.000    0.001    0.000 {built-in method gptzip._native.decode}\n      744    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:86(<lambda>)\n      128    0.000    0.000    0.000    0.000 {built-in method numpy.frombuffer}\n      744    0.000    0.000    0.000    0.000 {built-in method builtins.next}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:19(bytes_to_bits)\n      129    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:25(__init__)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n       90    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n       90    0.000    0.000    0.000    0.000 {built-in method builtins.bin}\n        1    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n        1    0.000    0.000    0.000    0.000 {built-in method builtins.iter}\n\n\n"
+    },
+    "encode_v151936_b16_t128": {
+      "seconds": [
+        0.5665375366806984,
+        0.5839580129832029,
+        0.5735083278268576
+      ],
+      "median_seconds": 0.5735083278268576,
+      "python_peak_bytes": 616056,
+      "digest": "ac959c8965f565113f8b40e63d27fb72259b202335c3334f0fd960d7fe91518d",
+      "profile": "         10434 function calls in 0.595 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.001    0.001    0.595    0.595 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:69(encode)\n     2048    0.001    0.000    0.591    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n     2048    0.588    0.000    0.588    0.000 {built-in method gptzip._native.build_cdf}\n     2048    0.002    0.000    0.002    0.000 {built-in method numpy.frombuffer}\n     2048    0.001    0.000    0.001    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:17(encode)\n     2048    0.001    0.000    0.001    0.000 {built-in method gptzip._native.encode}\n       16    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:4(bits_to_bytes)\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:12(__init__)\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:20(terminate)\n       16    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n       64    0.000    0.000    0.000    0.000 {built-in method builtins.len}\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n       16    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n\n\n"
+    },
+    "decode_v151936_b16_t128": {
+      "seconds": [
+        0.612032257951796,
+        0.5705630267038941,
+        0.5668904641643167
+      ],
+      "median_seconds": 0.5705630267038941,
+      "python_peak_bytes": 637555,
+      "digest": "965304f56d51f81007c5553dd07d7aac0602958412028c53b1f81cf98f8791f1",
+      "profile": "         33156 function calls in 0.595 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.002    0.002    0.594    0.594 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:82(decode)\n     2048    0.001    0.000    0.586    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/probability.py:17(build_cdf)\n     2048    0.583    0.000    0.583    0.000 {built-in method gptzip._native.build_cdf}\n     2048    0.001    0.000    0.005    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:30(decode)\n     2048    0.002    0.000    0.005    0.000 {built-in method gptzip._native.decode}\n     9280    0.002    0.000    0.003    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:86(<lambda>)\n     2048    0.002    0.000    0.002    0.000 {built-in method numpy.frombuffer}\n     9280    0.001    0.000    0.001    0.000 {built-in method builtins.next}\n       16    0.000    0.000    0.001    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_bits.py:19(bytes_to_bits)\n     2064    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:25(__init__)\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n     1105    0.000    0.000    0.000    0.000 {method 'zfill' of 'str' objects}\n     1105    0.000    0.000    0.000    0.000 {built-in method builtins.bin}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n       16    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}\n       16    0.000    0.000    0.000    0.000 {built-in method builtins.iter}\n\n\n"
+    }
+  }
+}

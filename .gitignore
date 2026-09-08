@@ -1,3 +1,6 @@
 __pycache__/
+*.so
+build/
 *.egg-info/
+.pytest_cache/
 dist/

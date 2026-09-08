@@ -1,0 +1,40 @@
+{
+  "precision": "int8",
+  "threads": 4,
+  "source_sha256": "d1606e58ca14f297223a9e3861e82ee95b6d44eeb2d250a2232a5923b13cbb4b",
+  "cases": {
+    "batch16": {
+      "encode_seconds": 249.96716171689332,
+      "decode_seconds": 228.7044787015766,
+      "tokens": 9147,
+      "code_bits": [
+        1075,
+        1188,
+        1139,
+        1276,
+        1080,
+        1201,
+        1096,
+        1100,
+        1223,
+        1127,
+        1118,
+        1128,
+        1133,
+        1112,
+        1153,
+        1127
+      ],
+      "exact_round_trip": true,
+      "token_sha256": "61e6b6d4cf1ca5aef3ffeb5536b00ce9db27d7a8680a3b0b279bfdbaf8da1c40"
+    },
+    "long_singleton": {
+      "encode_seconds": 196.85051091294736,
+      "decode_seconds": 196.43401580303907,
+      "tokens": 3525,
+      "code_bits": 1065,
+      "exact_round_trip": true,
+      "token_sha256": "e464d91f1cf7e14a38ea88a08d008baee10491a278c538404869694c8cbcfb1c"
+    }
+  }
+}

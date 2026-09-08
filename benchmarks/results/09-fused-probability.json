@@ -1,0 +1,75 @@
+{
+  "round": "09-fused-probability",
+  "source_sha256": "696ef9cc111351d3a36092df0d8853cd727f1167b736ae7b93fe3cf146bdff22",
+  "python": "3.13.11",
+  "numpy": "2.4.4",
+  "torch": "2.14.0.dev20260706+cu132",
+  "cases": {
+    "encode_v256_b1_t3525": {
+      "seconds": [
+        0.001274443231523037,
+        0.001244671642780304,
+        0.0012882798910140991
+      ],
+      "median_seconds": 0.001274443231523037,
+      "python_peak_bytes": 3691,
+      "digest": "094e4f0247df2720cabb4b6ceb0987cf3177a915d7220051da4ed3a97961d95e",
+      "profile": "         7057 function calls in 0.003 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.003    0.003 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:67(encode)\n     3525    0.001    0.000    0.002    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:13(encode_pdf)\n     3525    0.001    0.000    0.001    0.000 {built-in method gptzip._native.encode_pdf}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:7(__init__)\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:16(finish)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n        1    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n\n\n"
+    },
+    "decode_v256_b1_t3525": {
+      "seconds": [
+        0.002224157564342022,
+        0.0022391006350517273,
+        0.002245333045721054
+      ],
+      "median_seconds": 0.0022391006350517273,
+      "python_peak_bytes": 30996,
+      "digest": "2ad1d206f27f87de6100777be309781430e470daa3088bf1bda165ae13328e19",
+      "profile": "         10580 function calls in 0.004 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.001    0.001    0.004    0.004 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:78(decode)\n     3525    0.001    0.000    0.003    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:28(decode_pdf)\n     3525    0.002    0.000    0.002    0.000 {built-in method gptzip._native.decode_pdf}\n     3526    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:22(__init__)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n\n\n"
+    },
+    "encode_v151936_b1_t128": {
+      "seconds": [
+        0.016305768862366676,
+        0.016204677522182465,
+        0.016295144334435463
+      ],
+      "median_seconds": 0.016295144334435463,
+      "python_peak_bytes": 755,
+      "digest": "5ae9688ed7fe8e97e0a458dac29169d5c937b0f35f8b20236115a3cc730b06c0",
+      "profile": "         263 function calls in 0.016 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.016    0.016 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:67(encode)\n      128    0.000    0.000    0.016    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:13(encode_pdf)\n      128    0.016    0.000    0.016    0.000 {built-in method gptzip._native.encode_pdf}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:7(__init__)\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:16(finish)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n        1    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n\n\n"
+    },
+    "decode_v151936_b1_t128": {
+      "seconds": [
+        0.035243415273725986,
+        0.035108006559312344,
+        0.03520334791392088
+      ],
+      "median_seconds": 0.03520334791392088,
+      "python_peak_bytes": 610352,
+      "digest": "7df931fa630f4218de46cacfebf97c593b8655c6a0a0758679d2277bada46266",
+      "profile": "         389 function calls in 0.036 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.036    0.036 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:78(decode)\n      128    0.000    0.000    0.036    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:28(decode_pdf)\n      128    0.036    0.000    0.036    0.000 {built-in method gptzip._native.decode_pdf}\n      129    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n        1    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:22(__init__)\n        1    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n\n\n"
+    },
+    "encode_v151936_b16_t128": {
+      "seconds": [
+        0.29810732416808605,
+        0.2690768828615546,
+        0.25821508560329676
+      ],
+      "median_seconds": 0.2690768828615546,
+      "python_peak_bytes": 2379,
+      "digest": "ac959c8965f565113f8b40e63d27fb72259b202335c3334f0fd960d7fe91518d",
+      "profile": "         4178 function calls in 0.259 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.259    0.259 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:67(encode)\n     2048    0.000    0.000    0.259    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:13(encode_pdf)\n     2048    0.258    0.000    0.258    0.000 {built-in method gptzip._native.encode_pdf}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:7(__init__)\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:16(finish)\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.terminate}\n       16    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.encoder_new}\n\n\n"
+    },
+    "decode_v151936_b16_t128": {
+      "seconds": [
+        0.6532295644283295,
+        0.5678923334926367,
+        0.5627347463741899
+      ],
+      "median_seconds": 0.5678923334926367,
+      "python_peak_bytes": 636544,
+      "digest": "965304f56d51f81007c5553dd07d7aac0602958412028c53b1f81cf98f8791f1",
+      "profile": "         6194 function calls in 0.577 seconds\n\n   Ordered by: cumulative time\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.001    0.001    0.577    0.577 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/benchmarks/bench.py:78(decode)\n     2048    0.001    0.000    0.575    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:28(decode_pdf)\n     2048    0.575    0.000    0.575    0.000 {built-in method gptzip._native.decode_pdf}\n     2064    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}\n        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}\n       16    0.000    0.000    0.000    0.000 /home/ubuntu/worktrees/jack/starmux-sunhush-moss-gold-volcanic-iceflower-wolf/libs/gptzip/gptzip/_range.py:22(__init__)\n       16    0.000    0.000    0.000    0.000 {built-in method gptzip._native.decoder_new}\n\n\n"
+    }
+  }
+}

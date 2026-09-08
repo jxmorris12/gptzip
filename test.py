@@ -1,24 +1,38 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+"""Round-trip text with a local or already cached CPU language model."""
+
 import argparse
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 from gptzip import ArithmeticCoder
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("message", type=str, help="The message to print")
-    args = parser.parse_args()
 
-    model = "gpt2"
-    lm = AutoModelForCausalLM.from_pretrained(model)
-    tokenizer = AutoTokenizer.from_pretrained(model)
-    string = args.message
-    coder = ArithmeticCoder(lm=lm, tokenizer=tokenizer)
-    print(f"[0] Encoding... `{string}`")
-    code, num_padded_bits = coder.encode(
-        string, 
-        return_num_padded_bits=True, 
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("message", help="Text to encode and decode")
+    parser.add_argument(
+        "--model", default="gpt2", help="Local model path or cached model ID"
     )
-    print(f"[1] Code... `{code}` ({len(code)} bytes, num_padded_bits={num_padded_bits})")
-    print("\n" * 5)
-    decoded_string = coder.decode(code, num_padded_bits=num_padded_bits)
-    print(f"[2] Decoded: {decoded_string}")
+    parser.add_argument("--precision", choices=["fp32", "int8"], default="fp32")
+    parser.add_argument("--threads", type=int, default=4)
+    args = parser.parse_args()
+    torch.set_num_threads(args.threads)
+    model = (
+        AutoModelForCausalLM.from_pretrained(
+            args.model, local_files_only=True, dtype=torch.float32
+        )
+        .cpu()
+        .eval()
+    )
+    tokenizer = AutoTokenizer.from_pretrained(args.model, local_files_only=True)
+    coder = ArithmeticCoder(model, tokenizer, precision=args.precision)
+    code = coder.encode(args.message)
+    decoded = coder.decode(code)
+    assert decoded == args.message, "The tokenizer/model did not preserve this text"
+    print(f"Encoded {code.token_count} tokens into {code.bits} payload bits")
+    print(decoded)
 
+
+if __name__ == "__main__":
+    main()
